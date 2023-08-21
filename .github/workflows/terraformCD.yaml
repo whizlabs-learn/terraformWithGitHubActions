@@ -1,0 +1,43 @@
+name: 'Terraform CD'
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  terraform:
+    name: "Terraform CD"
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        shell: bash
+        
+    steps:
+    # Checkout the repository to the GitHub Actions runner
+    - name: 'Checkout'
+      uses: 'actions/checkout@v3'
+
+    # Install the latest version of Terraform CLI and configure the Terraform CLI configuration file with a Terraform Cloud user API token
+    - name: Setup Terraform
+      uses: hashicorp/setup-terraform@v1
+
+    # Initialize a new or existing Terraform working directory by creating initial files, loading any remote state, downloading modules, etc.
+    - name: Terraform Init
+      id: init
+      run: terraform init -reconfigure -upgrade
+      env:
+        GOOGLE_CREDENTIALS: ${{ secrets.GOOGLE_CREDENTIALS }} 
+
+    - name: Make provider executeable
+      run: chmod +x .terraform/providers/registry.terraform.io/hashicorp/google/4.78.0/linux_amd64/terraform-provider-google_v4.78.0_x5
+
+    # On push to main, build or change infrastructure according to Terraform configuration files
+    # Note: It is recommended to set up a required "strict" status check in your repository for "Terraform Cloud". See the documentation on "strict" required status checks for more information: https://help.github.com/en/github/administering-a-repository/types-of-required-status-checks
+    - name: Terraform Apply
+      id: apply
+      if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+      run: terraform apply --auto-approve
+      env:
+        GOOGLE_CREDENTIALS: ${{ secrets.GOOGLE_CREDENTIALS }} 
