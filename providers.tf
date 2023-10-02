@@ -1,12 +1,12 @@
 provider "google" {
-  project = "<PROJECT_ID>"
+  project = "student-00316"
   region  = "us-central1"
   zone    = "us-central1-a"
 }
 
 terraform {
   backend "gcs" {
-    bucket = "BACKEND_BUCKET_NAME"
+    bucket = "terraform-githubactions-integration"
     prefix = "terraform/state"
   }
 } 
