@@ -31,7 +31,9 @@ jobs:
         GOOGLE_CREDENTIALS: ${{ secrets.GOOGLE_CREDENTIALS }} 
 
     - name: Make provider executeable
-      run: chmod +x .terraform/providers/registry.terraform.io/hashicorp/google/4.78.0/linux_amd64/terraform-provider-google_v4.78.0_x5
+      run: |-
+        #chmod +x .terraform/providers/registry.terraform.io/hashicorp/google/4.78.0/linux_amd64/terraform-provider-google_v4.78.0_x5
+        chmod +x .terraform/providers/*/*/*/*/*/terraform-provider-*
 
     # Generates an execution plan for Terraform
     - name: Terraform Plan
